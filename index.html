@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стоматологическая клиника Жемчужина - стоматология, имплантация, протезирование</title>
+    <meta name="description" content="Стоматологическая клиника Жемчужина: лечение зубов, имплантация, протезирование, эстетическая стоматология. Современное оборудование, квалифицированные врачи.">
+    <meta name="keywords" content="стоматология, лечение зубов, имплантация зубов, протезирование зубов, эстетическая стоматология, отбеливание зубов, виниры, зубные коронки">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00677f',
+                        secondary: '#00b8d4',
+                        accent: '#ffd700',
+                        light: '#eef9fb',
+                    },
+                    fontFamily: {
+                        sans: ['Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Жемчужины */
+        .pearl {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, white, #f0f0f0 20%, #d9d9d9 60%);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            opacity: 0;
+            animation: pearl-appear 0.5s forwards, pearl-float 4s infinite ease-in-out;
+        }
+
+        @keyframes pearl-appear {
+            to { opacity: 0.9; }
+        }
+
+        @keyframes pearl-float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+
+        /* Анимации иконок услуг */
+        .icon-tooth { animation: pulse 1.8s infinite ease-in-out; }
+        .icon-teeth { animation: shake 3.5s infinite ease-in-out; }
+        .icon-syringe { animation: bounce 2.8s infinite ease-in-out; }
+        .icon-sparkles { animation: glow 2.5s infinite alternate; }
+        .icon-implant { animation: rotate 5s infinite linear; }
+        .icon-teeth-open { animation: pulse 2.2s infinite ease-in-out; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(4deg); }
+            75% { transform: rotate(-4deg); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px rgba(255,255,255,0.8)); }
+            to { filter: drop-shadow(0 0 12px rgba(255,255,255,1)); }
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Fade-in */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Отзывы — скроллбар */
+        .reviews-scroll::-webkit-scrollbar { height: 6px; }
+        .reviews-scroll::-webkit-scrollbar-track { background: transparent; }
+        .reviews-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+        /* Скрытие мобильных элементов на десктопе и наоборот */
+        .mobile-menu { display: none; }
+        .desktop-nav { display: flex; }
+
+        @media (max-width: 1023px) {
+            .desktop-nav { display: none !important; }
+            .mobile-menu { display: block !important; }
+        }
+
+        /* Гамбургер */
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Мобильное меню */
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,103,127,0.95);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity-0 pointer-events-none transition-opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active {
+            opacity: 1 !important;
+            pointer-events: all !important;
+        }
+
+        /* Скролл по горизонтали для отзывов */
+        @media (max-width: 767px) {
+            .reviews-scroll {
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            .review-card {
+                min-width: 280px;
+                max-width: 320px;
+                flex-shrink: 0;
+                scroll-snap-align: center;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .review-card {
+                min-width: 0;
+                width: auto;
+                flex-shrink: 1;
+                scroll-snap-align: start;
+            }
+        }
+
+        /* Галерея на мобильных */
+        @media (max-width: 639px) {
+            .gallery-grid img {
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- ========== МОБИЛЬНОЕ МЕНЮ ========== -->
+    <div id="mobileMenu" class="mobile-menu-overlay opacity-0 pointer-events-none transition-opacity duration-300 fixed inset-0 z-[9999] bg-primary/95 flex items-center justify-center">
+        <button id="closeMobileMenu" class="absolute top-4 right-4 text-white text-3xl hover:text-accent transition">&times;</button>
+        <nav class="text-center">
+            <a href="#home" class="mobile-link block text-xl md:text-2xl text-white py-3 hover:text-accent transition font-medium">Главная</a>
+            <a href="#services" class="mobile-link block text-xl md:text-2xl text-white py-3 hover:text-accent transition font-medium">Услуги</a>
+            <a href="#pricing" class="mobile-link block text-xl md:text-2xl text-white py-3 hover:text-accent transition font-medium">Прайс</a>
+            <a href="#about" class="mobile-link block text-xl md:text-2xl text-white py-3 hover:text-accent transition font-medium">О нас</a>
+            <a href="#lab" class="mobile-link block text-xl md:text-2xl text-white py-3 hover:text-accent transition font-medium">Лаборатория</a>
+            <a href="#gallery" class="mobile-link block text-xl md:text-2xl text-white py-3 hover:text-accent transition font-medium">Наши работы</a>
+            <a href="#jobs" class="mobile-link block text-xl md:text-2xl text-white py-3 hover:text-accent transition font-medium">Работа у нас</a>
+            <a href="#reviews" class="mobile-link block text-xl md:text-2xl text-white py-3 hover:text-accent transition font-medium">Отзывы</a>
+        </nav>
+    </div>
+
+    <!-- ========== ШАПКА ========== -->
+    <header class="fixed top-0 left-0 w-full bg-gradient-to-r from-primary to-secondary text-white shadow-lg z-[1000] transition-all duration-300" id="header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Верхняя полоса -->
+            <div class="flex flex-col md:flex-row items-center justify-between py-2 border-b border-white/20 text-xs sm:text-sm gap-1 md:gap-0">
+                <div class="flex flex-wrap justify-center md:justify-start gap-1.5 sm:gap-3 w-full md:w-auto">
+                    <a href="tel:+78005553535" class="inline-flex items-center gap-1.5 bg-black/20 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full hover:bg-black/40 transition text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+                        <i class="fas fa-phone text-accent"></i> 8 (800) 555-35-35
+                    </a>
+                    <a href="mailto:info@zhemchuzhina-demo.ru" class="inline-flex items-center gap-1.5 bg-black/20 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full hover:bg-black/40 transition text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+                        <i class="fas fa-envelope text-accent"></i> info@zhemchuzhina-demo.ru
+                    </a>
+                    <span class="hidden lg:inline-flex items-center gap-1.5 bg-black/20 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+                        <i class="fas fa-map-marker-alt text-accent"></i> ул. Цветочная, д. 12, г. Примеровск
+                    </span>
+                </div>
+            </div>
+
+            <!-- Нижняя полоса -->
+            <div class="flex items-center justify-between py-3">
+                <!-- Логотип -->
+                <a href="#home" class="flex items-center gap-2 text-base sm:text-lg md:text-xl font-bold hover:opacity-90 transition">
+                    <i class="fas fa-gem text-accent text-lg sm:text-xl"></i>
+                    <span class="hidden xs:inline">Жемчужина</span>
+                    <span class="xs:hidden">Жемчужина</span>
+                </a>
+
+                <!-- Десктоп навигация -->
+                <nav class="desktop-nav items-center gap-1 sm:gap-2 md:gap-4 text-[10px] sm:text-xs md:text-sm lg:text-base">
+                    <a href="#home" class="relative py-2 font-medium hover:text-accent transition whitespace-nowrap after:absolute after:left-0 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 hover:after:w-full">Главная</a>
+                    <a href="#services" class="relative py-2 font-medium hover:text-accent transition whitespace-nowrap after:absolute after:left-0 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 hover:after:w-full">Услуги</a>
+                    <a href="#pricing" class="relative py-2 font-medium hover:text-accent transition whitespace-nowrap after:absolute after:left-0 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 hover:after:w-full">Прайс</a>
+                    <a href="#about" class="relative py-2 font-medium hover:text-accent transition whitespace-nowrap after:absolute after:left-0 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 hover:after:w-full">О нас</a>
+                    <a href="#lab" class="relative py-2 font-medium hover:text-accent transition whitespace-nowrap after:absolute after:left-0 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 hover:after:w-full">Лаборатория</a>
+                    <a href="#gallery" class="relative py-2 font-medium hover:text-accent transition whitespace-nowrap after:absolute after:left-0 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 hover:after:w-full">Работы</a>
+                    <a href="#jobs" class="relative py-2 font-medium hover:text-accent transition whitespace-nowrap after:absolute after:left-0 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 hover:after:w-full">Вакансии</a>
+                    <a href="#reviews" class="relative py-2 font-medium hover:text-accent transition whitespace-nowrap after:absolute after:left-0 after:bottom-[-5px] after:w-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300 hover:after:w-full">Отзывы</a>
+                </nav>
+
+                <!-- Гамбургер (мобильный) -->
+                <button id="openMobileMenu" class="hamburger md:hidden flex flex-col gap-[5px] p-2 z-[10001]" aria-label="Открыть меню">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== ГЛАВНЫЙ БАННЕР ========== -->
+    <section id="home" class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-primary/90 via-primary to-secondary/85 pt-[120px] md:pt-[90px]" style="background-image: url('https://avrorastompro.ru/images/img.png'); background-size: cover; background-position: center;">
+        <div id="pearls-container" class="absolute inset-0 pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full py-12 md:py-20">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4 sm:mb-6 px-2">
+                Стоматология «Жемчужина» —<br class="sm:hidden"> Ваша идеальная улыбка!
+            </h1>
+            <p class="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 px-4 leading-relaxed max-w-3xl mx-auto">
+                Современная стоматология с передовым оборудованием. Лечение, имплантация, протезирование и эстетическая стоматология. Запишитесь на бесплатную консультацию!
+            </p>
+            <a href="#services" class="inline-block bg-gradient-to-r from-primary to-secondary text-white font-bold px-6 py-3 sm:px-8 sm:py-4 rounded-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-sm sm:text-base">
+                <i class="fas fa-tooth mr-2"></i>Наши услуги
+            </a>
+        </div>
+    </section>
+
+    <!-- ========== УСЛУГИ ========== -->
+    <section id="services" class="py-12 sm:py-16 md:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-primary mb-8 sm:mb-10 md:mb-12 relative">
+                Стоматологические услуги
+                <span class="block w-16 sm:w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-3 sm:mt-4 rounded-full"></span>
+            </h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+
+                <!-- Терапия -->
+                <div class="fade-in group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="h-36 sm:h-44 bg-gradient-to-br from-primary to-secondary flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-tooth service-icon icon-tooth text-white text-4xl sm:text-5xl md:text-6xl relative z-10"></i>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">Терапевтическая стоматология</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Лечение кариеса, пульпита, периодонтита с использованием современных материалов и технологий.</p>
+                    </div>
+                </div>
+
+                <!-- Ортопедия -->
+                <div class="fade-in group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="h-36 sm:h-44 bg-gradient-to-br from-primary to-secondary flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-teeth service-icon icon-teeth text-white text-4xl sm:text-5xl md:text-6xl relative z-10"></i>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">Ортопедия</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Восстановление зубов коронками, мостовидными протезами в клинике Жемчужина.</p>
+                    </div>
+                </div>
+
+                <!-- Хирургия -->
+                <div class="fade-in group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="h-36 sm:h-44 bg-gradient-to-br from-primary to-secondary flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-syringe service-icon icon-syringe text-white text-4xl sm:text-5xl md:text-6xl relative z-10"></i>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">Хирургическая стоматология</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Удаление зубов, имплантация, костная пластика в клинике Жемчужина.</p>
+                    </div>
+                </div>
+
+                <!-- Эстетика -->
+                <div class="fade-in group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="h-36 sm:h-44 bg-gradient-to-br from-primary to-secondary flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-gem service-icon icon-sparkles text-white text-4xl sm:text-5xl md:text-6xl relative z-10"></i>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">Эстетическая стоматология</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Отбеливание, виниры, художественная реставрация для создания идеальной улыбки.</p>
+                    </div>
+                </div>
+
+                <!-- Имплантация -->
+                <div class="fade-in group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="h-36 sm:h-44 bg-gradient-to-br from-primary to-secondary flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-tooth service-icon icon-implant text-white text-4xl sm:text-5xl md:text-6xl relative z-10"></i>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">Имплантация зубов</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Установка дентальных имплантов с последующим протезированием в клинике Жемчужина.</p>
+                    </div>
+                </div>
+
+                <!-- Протезирование -->
+                <div class="fade-in group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="h-36 sm:h-44 bg-gradient-to-br from-primary to-secondary flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-teeth-open service-icon icon-teeth-open text-white text-4xl sm:text-5xl md:text-6xl relative z-10"></i>
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">Протезирование зубов</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Съемное и несъемное протезирование, включая протезы из диоксида циркония.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ПРАЙС-ЛИСТ ========== -->
+    <section id="pricing" class="py-12 sm:py-16 md:py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-primary mb-8 sm:mb-10 md:mb-12 relative">
+                Цены на услуги
+                <span class="block w-16 sm:w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-3 sm:mt-4 rounded-full"></span>
+            </h2>
+
+            <div class="overflow-x-auto -mx-4 sm:mx-0">
+                <table class="w-full min-w-[540px] border-collapse bg-white shadow-md rounded-xl overflow-hidden text-sm md:text-base fade-in">
+                    <thead>
+                        <tr class="bg-primary text-white">
+                            <th class="py-3 px-4 sm:px-6 text-left font-semibold whitespace-nowrap">Услуга</th>
+                            <th class="py-3 px-4 sm:px-6 text-left font-semibold hidden sm:table-cell">Описание</th>
+                            <th class="py-3 px-4 sm:px-6 text-left font-semibold whitespace-nowrap">Стоимость</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-gray-100 hover:bg-light transition">
+                            <td class="py-3 px-4 sm:px-6 font-medium">Консультация</td>
+                            <td class="py-3 px-4 sm:px-6 text-gray-500 hidden sm:table-cell">Первичный осмотр и план лечения</td>
+                            <td class="py-3 px-4 sm:px-6 font-bold text-green-600 whitespace-nowrap">Бесплатно</td>
+                        </tr>
+                        <tr class="border-b border-gray-100 hover:bg-light transition">
+                            <td class="py-3 px-4 sm:px-6 font-medium">Лечение кариеса</td>
+                            <td class="py-3 px-4 sm:px-6 text-gray-500 hidden sm:table-cell">Препарирование</td>
+                            <td class="py-3 px-4 sm:px-6 whitespace-nowrap">от 350 ₽</td>
+                        </tr>
+                        <tr class="border-b border-gray-100 hover:bg-light transition">
+                            <td class="py-3 px-4 sm:px-6 font-medium">Слепок альгинальный</td>
+                            <td class="py-3 px-4 sm:px-6 text-gray-500 hidden sm:table-cell">—</td>
+                            <td class="py-3 px-4 sm:px-6 whitespace-nowrap">450 ₽</td>
+                        </tr>
+                        <tr class="border-b border-gray-100 hover:bg-light transition">
+                            <td class="py-3 px-4 sm:px-6 font-medium">Коронка из пластмассы</td>
+                            <td class="py-3 px-4 sm:px-6 text-gray-500 hidden sm:table-cell">Временная коронка Vertex</td>
+                            <td class="py-3 px-4 sm:px-6 whitespace-nowrap">1 650 ₽</td>
+                        </tr>
+                        <tr class="border-b border-gray-100 hover:bg-light transition">
+                            <td class="py-3 px-4 sm:px-6 font-medium">Коронка из диоксида циркония</td>
+                            <td class="py-3 px-4 sm:px-6 text-gray-500 hidden sm:table-cell">Изготовление и установка</td>
+                            <td class="py-3 px-4 sm:px-6 whitespace-nowrap">15 000 ₽</td>
+                        </tr>
+                        <tr class="hover:bg-light transition">
+                            <td class="py-3 px-4 sm:px-6 font-medium">Имплантация</td>
+                            <td class="py-3 px-4 sm:px-6 text-gray-500 hidden sm:table-cell">Установка одного импланта</td>
+                            <td class="py-3 px-4 sm:px-6 whitespace-nowrap">от 25 000 ₽</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== О НАС ========== -->
+    <section id="about" class="py-12 sm:py-16 md:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-primary mb-8 sm:mb-10 md:mb-12 relative">
+                О нашей клинике
+                <span class="block w-16 sm:w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-3 sm:mt-4 rounded-full"></span>
+            </h2>
+
+            <div class="flex flex-col lg:flex-row gap-6 md:gap-10 items-start">
+                <!-- Текст -->
+                <div class="w-full lg:w-1/2 fade-in">
+                    <p class="text-sm sm:text-base leading-relaxed mb-4 text-gray-700">
+                        Стоматологическая клиника «Жемчужина» была основана в 1990 году с целью предоставления высококачественных стоматологических услуг для всей семьи.
+                    </p>
+                    <p class="text-sm sm:text-base leading-relaxed mb-4 text-gray-700">
+                        За годы работы мы помогли тысячам пациентов обрести здоровую и красивую улыбку. Наша клиника оснащена современным оборудованием, а врачи регулярно проходят повышение квалификации.
+                    </p>
+                    <p class="text-sm sm:text-base leading-relaxed mb-4 text-gray-700">
+                        Мы используем только проверенные материалы и передовые технологии, чтобы обеспечить нашим пациентам лучшее лечение.
+                    </p>
+                    <p class="text-sm sm:text-base leading-relaxed text-gray-700 font-medium">
+                        Наш принцип — индивидуальный подход к каждому пациенту и решение даже самых сложных стоматологических проблем.
+                    </p>
+                </div>
+
+                <!-- Фото -->
+                <div class="w-full lg:w-1/2 fade-in">
+                    <div class="rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://avatars.mds.yandex.net/get-altay/1880508/2a0000016e591a4af41fba762d5a75a9b4d8/L_height"
+                             alt="Интерьер клиники Жемчужина"
+                             class="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+                             loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ЛАБОРАТОРИЯ ========== -->
+    <section id="lab" class="py-12 sm:py-16 md:py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-primary mb-8 sm:mb-10 md:mb-12 relative">
+                Зуботехническая лаборатория
+                <span class="block w-16 sm:w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-3 sm:mt-4 rounded-full"></span>
+            </h2>
+
+            <div class="flex flex-col lg:flex-row gap-6 md:gap-10 items-start mb-12 sm:mb-16">
+                <div class="w-full lg:w-1/2 fade-in">
+                    <p class="text-sm sm:text-base leading-relaxed mb-4 text-gray-700">
+                        В нашей собственной зуботехнической лаборатории мы изготавливаем высокоточные зубные протезы из диоксида циркония — материала, сочетающего прочность, долговечность и эстетику.
+                    </p>
+                    <p class="text-sm sm:text-base leading-relaxed mb-4 text-gray-700">
+                        Диоксид циркония — это современный материал, который не уступает по прочности металлу, но обладает прекрасными эстетическими свойствами, схожими с натуральной эмалью.
+                    </p>
+                    <p class="text-sm sm:text-base leading-relaxed text-gray-700">
+                        Наше производство оснащено CAD/CAM системами, сканерами и печами для спекания, что позволяет создавать конструкции высочайшего качества.
+                    </p>
+                </div>
+                <div class="w-full lg:w-1/2 fade-in">
+                    <div class="rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://стоматех.рф/wp-content/uploads/2025/05/1111%D0%B9%D1%86%D1%86%D1%86%D1%86-600x400.jpg"
+                             alt="Зуботехническая лаборатория"
+                             class="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+                             loading="lazy">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Оборудование -->
+            <h3 class="text-xl sm:text-2xl font-bold text-center text-primary mb-6 sm:mb-8 md:mb-10 relative inline-block w-full">
+                Наше оборудование
+                <span class="block w-16 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-2 rounded-full"></span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12">
+                <div class="fade-in bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="h-40 sm:h-48 overflow-hidden relative">
+                        <img src="https://stomamart.ru/upload/iblock/d7a/sqzm9bk1pjrj45qvrhub2jg4332lkqye/edge_in_artikulyator_dof.png"
+                             alt="3D сканер" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">3D сканеры</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Высокоточные внутриротовые сканеры для цифрового слепка с точностью до 5 микрон.</p>
+                    </div>
+                </div>
+                <div class="fade-in bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="h-40 sm:h-48 overflow-hidden relative">
+                        <img src="https://stomamart.ru/upload/iblock/f98/nuuy4uxgo76ivupquk991qccm448qf1y/BB2521C3_D6A7_4360_902F_A943F793BEC3.jpeg"
+                             alt="Фрезерный станок" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">Фрезерные станки</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Современные CAD/CAM системы для прецизионного изготовления зубных протезов.</p>
+                    </div>
+                </div>
+                <div class="fade-in bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="h-40 sm:h-48 overflow-hidden relative">
+                        <img src="https://fordent.ru/upload/iblock/708/k9g3tehm6t4fi6ap6l4v8np5mqjgbxx6/zetin-ztcf-30b-plus-foto.webp"
+                             alt="Печь для спекания" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                    </div>
+                    <div class="p-4 sm:p-5">
+                        <h3 class="text-base sm:text-lg font-bold text-primary mb-2">Печи для спекания</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Высокотемпературные печи для обработки диоксида циркония.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Прайс лаборатории -->
+            <h3 class="text-xl sm:text-2xl font-bold text-center text-primary mb-6 sm:mb-8 relative inline-block w-full">
+                Прайс-лист лаборатории
+                <span class="block w-16 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-2 rounded-full"></span>
+            </h3>
+
+            <div class="overflow-x-auto -mx-4 sm:mx-0">
+                <table class="w-full min-w-[540px] border-collapse bg-white shadow-md rounded-xl overflow-hidden text-sm md:text-base fade-in">
+                    <thead>
+                        <tr class="bg-primary text-white">
+                            <th class="py-3 px-4 sm:px-6 text-left font-semibold whitespace-nowrap">Услуга</th>
+                            <th class="py-3 px-4 sm:px-6 text-left font-semibold hidden sm:table-cell">Материал</th>
+                            <th class="py-3 px-4 sm:px-6 text-left font-semibold whitespace-nowrap">Стоимость</th>
+                            <th class="py-3 px-4 sm:px-6 text-left font-semibold whitespace-nowrap hidden sm:table-cell">Срок</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-gray-100 hover:bg-light transition"><td class="py-3 px-4 sm:px-6 font-medium">Коронка</td><td class="text-gray-500 hidden sm:table-cell">Диоксид циркония</td><td class="whitespace-nowrap">6 500 ₽</td><td class="hidden sm:table-cell">7 дней</td></tr>
+                        <tr class="border-b border-gray-100 hover:bg-light transition"><td class="py-3 px-4 sm:px-6 font-medium">Коронка PMMA</td><td class="text-gray-500 hidden sm:table-cell">PMMA</td><td class="whitespace-nowrap">2 000 ₽</td><td class="hidden sm:table-cell">7 дней</td></tr>
+                        <tr class="border-b border-gray-100 hover:bg-light transition"><td class="py-3 px-4 sm:px-6 font-medium">Вкладка</td><td class="text-gray-500 hidden sm:table-cell">Диоксид циркония</td><td class="whitespace-nowrap">5 000 ₽</td><td class="hidden sm:table-cell">7 дней</td></tr>
+                        <tr class="border-b border-gray-100 hover:bg-light transition"><td class="py-3 px-4 sm:px-6 font-medium">Винир</td><td class="text-gray-500 hidden sm:table-cell">Диоксид циркония</td><td class="whitespace-nowrap">7 500 ₽</td><td class="hidden sm:table-cell">7 дней</td></tr>
+                        <tr class="border-b border-gray-100 hover:bg-light transition"><td class="py-3 px-4 sm:px-6 font-medium">Съёмный протез</td><td class="text-gray-500 hidden sm:table-cell">Акрил</td><td class="whitespace-nowrap">8 000 ₽</td><td class="hidden sm:table-cell">7–12 дней</td></tr>
+                        <tr class="hover:bg-light transition"><td class="py-3 px-4 sm:px-6 font-medium">Бюгельный протез</td><td class="text-gray-500 hidden sm:table-cell">Металл + пластмасса</td><td class="whitespace-nowrap">от 15 000 ₽</td><td class="hidden sm:table-cell">10–14 дней</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== НАШИ РАБОТЫ ========== -->
+    <section id="gallery" class="py-12 sm:py-16 md:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-primary mb-8 sm:mb-10 md:mb-12 relative">
+                Наши работы
+                <span class="block w-16 sm:w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-3 sm:mt-4 rounded-full"></span>
+            </h2>
+
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 gallery-grid">
+                <div class="fade-in rounded-xl overflow-hidden shadow-md group">
+                    <img src="https://old.colibri-dent.ru/UPLOAD/user/2021/92-pered-zuby-tsrkoniy.jpg" alt="Работа 1" class="w-full h-36 sm:h-48 md:h-56 object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                </div>
+                <div class="fade-in rounded-xl overflow-hidden shadow-md group">
+                    <img src="https://www.dental-med.spb.ru/images/protez/prot19.jpg" alt="Работа 2" class="w-full h-36 sm:h-48 md:h-56 object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                </div>
+                <div class="fade-in rounded-xl overflow-hidden shadow-md group">
+                    <img src="https://denta-life.su/wp-content/uploads/2020/07/1-5.jpg" alt="Работа 3" class="w-full h-36 sm:h-48 md:h-56 object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                </div>
+                <div class="fade-in rounded-xl overflow-hidden shadow-md group">
+                    <img src="https://mkdent.su/wp-content/uploads/2020/08/WhatsApp-Image-2023-09-02-at-14.24.27.jpeg" alt="Работа 4" class="w-full h-36 sm:h-48 md:h-56 object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                </div>
+                <div class="fade-in rounded-xl overflow-hidden shadow-md group">
+                    <img src="https://антериор.рф/protezirovanie/metallokeramicheskie-koronki-i-mostovidnye-protezy/images/Metallcrown_img_2.jpg" alt="Работа 5" class="w-full h-36 sm:h-48 md:h-56 object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                </div>
+                <div class="fade-in rounded-xl overflow-hidden shadow-md group">
+                    <img src="https://www.dento-komfort.ru/zamochki-attachmeny.png" alt="Работа 6" class="w-full h-36 sm:h-48 md:h-56 object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                </div>
+                <div class="fade-in rounded-xl overflow-hidden shadow-md group">
+                    <img src="https://sofiya-denta.ru/wp-content/uploads/2017/03/artikulyator-300x300.jpg" alt="Работа 7" class="w-full h-36 sm:h-48 md:h-56 object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                </div>
+                <div class="fade-in rounded-xl overflow-hidden shadow-md group">
+                    <img src="https://fordent.ru/upload/iblock/697/exocad-model-creator-modul-sozdaniya-modeley-foto.jpg" alt="Работа 8" class="w-full h-36 sm:h-48 md:h-56 object-cover hover:scale-110 transition-transform duration-500" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ВАКАНСИИ ========== -->
+    <section id="jobs" class="py-12 sm:py-16 md:py-20 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-primary mb-8 sm:mb-10 md:mb-12 relative">
+                Работа у нас
+                <span class="block w-16 sm:w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-3 sm:mt-4 rounded-full"></span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mb-8 sm:mb-10">
+                <!-- Терапевт -->
+                <div class="fade-in bg-white rounded-xl p-5 sm:p-6 shadow-md">
+                    <h3 class="text-lg sm:text-xl font-bold text-primary mb-3">Стоматолог-терапевт</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 mb-4 leading-relaxed">Мы ищем опытного стоматолога-терапевта для работы в современной клинике с новейшим оборудованием.</p>
+                    <h4 class="font-bold text-sm text-primary mb-1">Обязанности:</h4>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-gray-600 mb-3 space-y-0.5 leading-relaxed">
+                        <li>Диагностика и лечение заболеваний зубов</li>
+                        <li>Санитарно-просветительская работа с пациентами</li>
+                        <li>Ведение медицинской документации</li>
+                    </ul>
+                    <h4 class="font-bold text-sm text-primary mb-1">Требования:</h4>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-gray-600 mb-3 space-y-0.5 leading-relaxed">
+                        <li>Высшее медицинское образование</li>
+                        <li>Действующий сертификат</li>
+                        <li>Опыт работы от 3 лет</li>
+                    </ul>
+                    <h4 class="font-bold text-sm text-primary mb-1">Условия:</h4>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-gray-600 space-y-0.5 leading-relaxed">
+                        <li>Конкурентная заработная плата</li>
+                        <li>График работы 5/2</li>
+                        <li>Возможность профессионального роста</li>
+                    </ul>
+                </div>
+
+                <!-- Ортопед -->
+                <div class="fade-in bg-white rounded-xl p-5 sm:p-6 shadow-md">
+                    <h3 class="text-lg sm:text-xl font-bold text-primary mb-3">Стоматолог-ортопед</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 mb-4 leading-relaxed">Приглашаем опытного стоматолога-ортопеда для работы с современными материалами и технологиями.</p>
+                    <h4 class="font-bold text-sm text-primary mb-1">Обязанности:</h4>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-gray-600 mb-3 space-y-0.5 leading-relaxed">
+                        <li>Протезирование зубов</li>
+                        <li>Работа с керамикой и диоксидом циркония</li>
+                        <li>Взаимодействие с зубными техниками</li>
+                    </ul>
+                    <h4 class="font-bold text-sm text-primary mb-1">Требования:</h4>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-gray-600 mb-3 space-y-0.5 leading-relaxed">
+                        <li>Высшее медицинское образование</li>
+                        <li>Сертификат по ортопедической стоматологии</li>
+                        <li>Опыт работы от 3 лет</li>
+                    </ul>
+                    <h4 class="font-bold text-sm text-primary mb-1">Условия:</h4>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-gray-600 space-y-0.5 leading-relaxed">
+                        <li>Высокий уровень дохода</li>
+                        <li>Современное оборудование</li>
+                        <li>Дружный коллектив</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="#contacts" class="inline-block bg-gradient-to-r from-primary to-secondary text-white font-bold px-6 py-3 sm:px-8 sm:py-4 rounded-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-sm sm:text-base">
+                    <i class="fas fa-phone mr-2"></i>Для записи на собеседование обращайтесь по телефону или на нашу почту
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ОТЗЫВЫ ========== -->
+    <section id="reviews" class="py-12 sm:py-16 md:py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-primary mb-8 sm:mb-10 md:mb-12 relative">
+                Отзывы пациентов
+                <span class="block w-16 sm:w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-3 sm:mt-4 rounded-full"></span>
+            </h2>
+
+            <div class="reviews-scroll flex gap-4 sm:gap-5 overflow-x-auto pb-4 px-1 scroll-smooth snap-x">
+                <!-- Отзыв 1 -->
+                <div class="review-card bg-white rounded-xl p-4 sm:p-5 shadow-md flex-shrink-0 snap-center md:snap-none">
+                    <div class="flex items-center gap-3 mb-3 sm:mb-4">
+                        <div class="w-10 h-10 sm:w-[55px] sm:h-[55px] rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://partner-med.com/userfls/site/theme/home_img1.jpg" alt="Марина Иванова" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm sm:text-base text-primary">Марина Иванова</div>
+                            <div class="text-xs text-gray-400">15.02.2023</div>
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Очень благодарна врачам клиники «Жемчужина» за прекрасную работу. Установила виниры, теперь не могу налюбоваться своей улыбкой! Процесс был абсолютно безболезненным.</p>
+                </div>
+
+                <!-- Отзыв 2 -->
+                <div class="review-card bg-white rounded-xl p-4 sm:p-5 shadow-md flex-shrink-0 snap-center md:snap-none">
+                    <div class="flex items-center gap-3 mb-3 sm:mb-4">
+                        <div class="w-10 h-10 sm:w-[55px] sm:h-[55px] rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://avatars.mds.yandex.net/get-tycoon/14772543/2a000001959409a9d98dea2a8922b825b278/M_height" alt="Сергей Петров" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm sm:text-base text-primary">Сергей Петров</div>
+                            <div class="text-xs text-gray-400">28.03.2023</div>
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Делал имплантацию в этой клинике. Очень доволен результатом! Все прошло идеально, врачи — профессионалы своего дела. Особенно хочу отметить внимательное отношение всего персонала.</p>
+                </div>
+
+                <!-- Отзыв 3 -->
+                <div class="review-card bg-white rounded-xl p-4 sm:p-5 shadow-md flex-shrink-0 snap-center md:snap-none">
+                    <div class="flex items-center gap-3 mb-3 sm:mb-4">
+                        <div class="w-10 h-10 sm:w-[55px] sm:h-[55px] rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://prodoctorov.ru/media/photo/nizhnevartovsk/doctorimage/505557/1243629-505557-hotemlyanskaya_square_small.jpg" alt="Ольга Сидорова" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm sm:text-base text-primary">Ольга Сидорова</div>
+                            <div class="text-xs text-gray-400">05.05.2023</div>
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Хожу в «Жемчужину» всей семьей уже несколько лет. Всегда качественное лечение, современное оборудование и приятная атмосфера. Особенно радует, что детям нравится посещать стоматолога.</p>
+                </div>
+
+                <!-- Отзыв 4 -->
+                <div class="review-card bg-white rounded-xl p-4 sm:p-5 shadow-md flex-shrink-0 snap-center md:snap-none">
+                    <div class="flex items-center gap-3 mb-3 sm:mb-4">
+                        <div class="w-10 h-10 sm:w-[55px] sm:h-[55px] rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://drjoydentalclinic.com/wp-content/uploads/2021/06/patient-thumbs-up.jpg" alt="Александр Козлов" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm sm:text-base text-primary">Александр Козлов</div>
+                            <div class="text-xs text-gray-400">18.06.2023</div>
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Делал протезирование на имплантах. Результатом очень доволен! Все выглядит и ощущается как натуральные зубы. Спасибо врачам за профессионализм и внимательное отношение.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ФУТЕР ========== -->
+    <footer id="contacts" class="bg-gradient-to-br from-primary to-secondary text-white py-10 sm:py-12 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 mb-8 sm:mb-10 md:mb-12">
+
+                <!-- О клинике -->
+                <div>
+                    <h3 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 relative pb-2 after:content-[''] after:block after:w-8 sm:w-9 after:h-[3px] after:bg-accent after:mt-2">О клинике</h3>
+                    <p class="text-xs sm:text-sm leading-relaxed text-white/85">Стоматологическая клиника «Жемчужина» предоставляет полный спектр стоматологических услуг с использованием современных технологий и материалов.</p>
+                </div>
+
+                <!-- Услуги -->
+                <div>
+                    <h3 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 relative pb-2 after:content-[''] after:block after:w-8 sm:w-9 after:h-[3px] after:bg-accent after:mt-2">Услуги</h3>
+                    <ul class="text-xs sm:text-sm text-white/85 space-y-1.5 leading-relaxed">
+                        <li><i class="fas fa-chevron-right text-accent text-[8px] mr-1"></i>Терапевтическая стоматология</li>
+                        <li><i class="fas fa-chevron-right text-accent text-[8px] mr-1"></i>Ортопедия</li>
+                        <li><i class="fas fa-chevron-right text-accent text-[8px] mr-1"></i>Хирургическая стоматология</li>
+                        <li><i class="fas fa-chevron-right text-accent text-[8px] mr-1"></i>Эстетическая стоматология</li>
+                        <li><i class="fas fa-chevron-right text-accent text-[8px] mr-1"></i>Имплантация</li>
+                        <li><i class="fas fa-chevron-right text-accent text-[8px] mr-1"></i>Протезирование</li>
+                    </ul>
+                </div>
+
+                <!-- Контакты -->
+                <div>
+                    <h3 class="text-base sm:text-lg font-bold mb-3 sm:mb-4 relative pb-2 after:content-[''] after:block after:w-8 sm:w-9 after:h-[3px] after:bg-accent after:mt-2">Контакты</h3>
+                    <div class="text-xs sm:text-sm text-white/85 space-y-2.5 leading-relaxed">
+                        <p><i class="fas fa-map-marker-alt text-accent w-4 text-center mr-1"></i>ул. Цветочная, д. 12, г. Примеровск</p>
+                        <p><i class="fas fa-phone text-accent w-4 text-center mr-1"></i><a href="tel:+78005553535" class="hover:text-accent transition">8 (800) 555-35-35</a></p>
+                        <p><i class="fas fa-envelope text-accent w-4 text-center mr-1"></i><a href="mailto:info@zhemchuzhina-demo.ru" class="hover:text-accent transition">info@zhemchuzhina-demo.ru</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pt-6 border-t border-white/20 text-[10px] sm:text-xs text-white/70">
+                <p>&copy; 2025 ООО «Жемчужина». Все права защищены. Данный сайт является демонстрационным.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== СКРИПТЫ ========== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // ====== ЖЕМЧУЖИНЫ ======
+            (function createPearls() {
+                const container = document.getElementById('pearls-container');
+                if (!container) return;
+                const counts = { small: 12, medium: 8, large: 4 };
+                for (const [size, count] of Object.entries(counts)) {
+                    for (let i = 0; i < count; i++) {
+                        const pearl = document.createElement('div');
+                        pearl.className = `pearl ${size === 'small' ? 'w-3 h-3' : size === 'medium' ? 'w-6 h-6' : 'w-[2.8rem] h-[2.8rem]'}`;
+                        pearl.style.left = Math.random() * 100 + '%';
+                        pearl.style.top = Math.random() * 100 + '%';
+                        pearl.style.animationDelay = (Math.random() * 2) + 's, ' + (Math.random() * 2) + 's';
+                        container.appendChild(pearl);
+                    }
+                }
+            })();
+
+            // ====== ПЛАВНАЯ ПРОКРУТКА ======
+            document.querySelectorAll('nav a[href^="#"], .mobile-link').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const el = document.querySelector(targetId);
+                    if (!el) return;
+                    window.scrollTo({ top: el.offsetTop - 70, behavior: 'smooth' });
+                });
+            });
+
+            // ====== FADE-IN OBSERVER ======
+            const fadeEls = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+            fadeEls.forEach(el => observer.observe(el));
+
+            // ====== МОБИЛЬНОЕ МЕНЮ ======
+            const mobileMenu = document.getElementById('mobileMenu');
+            const openBtn = document.getElementById('openMobileMenu');
+            const closeBtn = document.getElementById('closeMobileMenu');
+            if (openBtn && mobileMenu) {
+                openBtn.addEventListener('click', () => {
+                    mobileMenu.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+            if (closeBtn && mobileMenu) {
+                closeBtn.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            // ====== HEADER SHRINK ON SCROLL ======
+            const header = document.getElementById('header');
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 80) {
+                        header.classList.add('py-0');
+                    } else {
+                        header.classList.remove('py-0');
+                    }
+                }, { passive: true });
+            }
+        });
+    </script>
+</body>
+</html>
